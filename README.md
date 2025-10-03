@@ -1,4 +1,4 @@
-Jelper Coding Test
+Jelper Club Coding Test
 
 Task: Create a Todo list API handling CRUD operations using FastAPI and SQLAlchemy, with SQLite for the database. 
 
