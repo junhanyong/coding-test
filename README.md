@@ -9,7 +9,7 @@ CRUD Operations:
 
 2.2 read_todos: All the entries in the DB are returned.
 
-3. update_todo: User inputs an ID, and the boolean value for whether the Todo is completed is update to "True".
+3. update_todo: User inputs an ID, and the boolean value for whether the Todo is completed is updated to "True".
   
 4. delete_todo: User inputs an ID, and the corresponding entry in the DB is deleted.
 
