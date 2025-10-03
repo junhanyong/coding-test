@@ -31,10 +31,9 @@ def get_db():
     finally:
         db.close()
 
-# FastAPI CRUD operations 
 app = FastAPI()
 
-# Data validation
+# Data validation for both input and output
 class TodoCreate(BaseModel):
     title: str
 
@@ -46,6 +45,7 @@ class TodoResponse(BaseModel):
     class Config:
         orm_mode = True
 
+# CRUD operations
 @app.post("/todo/", response_model=TodoResponse) 
 def create_todo(todo: TodoCreate, db: Session = Depends(get_db)):
     db_todo = Todo(title=todo.title)
@@ -67,3 +67,26 @@ def read_todos(db: Session = Depends(get_db)):
     todos = db.query(Todo).all()
     return todos
 
+@app.patch("/todo/{todo_id}", response_model=TodoResponse)
+def update_todo(todo_id: int, db: Session = Depends(get_db)):
+    todo = db.query(Todo).filter(todo_id == Todo.id).first()
+    # Check if id exists
+    if not todo:
+        raise HTTPException(status_code=404, detail="ID does not exist")
+    todo.completed = True
+    db.commit()
+    db.refresh(todo)
+    return todo
+
+@app.delete("/todo/{todo_id}")
+def delete_todo(todo_id: int, db: Session = Depends(get_db)):
+    todo = db.query(Todo).filter(todo_id == Todo.id).first()
+    if not todo:
+        raise HTTPException(status_code=404, detail="ID does not exist")
+    db.delete(todo)
+    db.commit()
+    return {"message": f"ID {todo_id} deleted successfully."}
+
+# Reset DB for testing
+Base.metadata.drop_all(bind=engine)
+Base.metadata.create_all(bind=engine)
